@@ -35,3 +35,9 @@ class MainActivity : AppCompatActivity() {
     }
 }
 
+fun main(args: Array<String>) {
+    print("Write anything here: ")
+
+    val enteredString = readLine()
+    println("You have entered this: $enteredString")
+}
