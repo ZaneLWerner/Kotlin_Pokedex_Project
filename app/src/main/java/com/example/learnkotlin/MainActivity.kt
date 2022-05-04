@@ -7,7 +7,14 @@ import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupActionBarWithNavController
 import com.example.learnkotlin.databinding.ActivityMainBinding
 import com.google.android.material.snackbar.Snackbar
-import jdk.nashorn.internal.runtime.PropertyDescriptor.GET
+import com.google.gson.Gson
+import okhttp3.OkHttpClient
+import retrofit2.Call
+import retrofit2.Retrofit
+import retrofit2.Retrofit.Builder
+import retrofit2.converter.gson.GsonConverterFactory
+import retrofit2.http.GET
+import retrofit2.http.Path
 
 
 class MainActivity : AppCompatActivity() {
@@ -33,17 +40,27 @@ class MainActivity : AppCompatActivity() {
         }
     }
 }
-interface GitHubService {
-    @GET("users/{user}/repos")
-    fun listRepos(@Path("user") user: String?): Call<List<Repo?>?>?
-}
+var client = OkHttpClient()
 
+var gson = Gson()
+
+interface PokemonService {
+
+    @GET("api/v2/pokemon/{name}/")
+    fun listPokemon(@Path("name") name: String?): Call<Poke>
+}
+//https://pokeapi.co/api/v2/pokemon/{id or name}/
 var retrofit: Retrofit = Builder()
-    .baseUrl("https://api.github.com/")
+    .baseUrl("https://pokeapi.co/")
+    .addConverterFactory(GsonConverterFactory.create(gson))
+    .client(client)
     .build()
 
-var service: GitHubService = retrofit.create(GitHubService::class.java)
+var service: PokemonService = retrofit.create(PokemonService::class.java)
 
 fun main(){
-    val repos: Call<List<Repo>> = service.listRepos("octocat")
+    //user input
+    val apiCall: Call<Poke> = service.listPokemon("user input")
+
+    print(apiCall)
 }
