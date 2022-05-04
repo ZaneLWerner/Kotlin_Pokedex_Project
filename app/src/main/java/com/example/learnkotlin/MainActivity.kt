@@ -1,15 +1,14 @@
 package com.example.learnkotlin
 
 import android.os.Bundle
-import com.google.android.material.snackbar.Snackbar
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
-import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
-import android.view.Menu
-import android.view.MenuItem
 import com.example.learnkotlin.databinding.ActivityMainBinding
+import com.google.android.material.snackbar.Snackbar
+import jdk.nashorn.internal.runtime.PropertyDescriptor.GET
+
 
 class MainActivity : AppCompatActivity() {
 
@@ -34,10 +33,17 @@ class MainActivity : AppCompatActivity() {
         }
     }
 }
+interface GitHubService {
+    @GET("users/{user}/repos")
+    fun listRepos(@Path("user") user: String?): Call<List<Repo?>?>?
+}
 
-fun main(args: Array<String>) {
-    print("Write anything here: ")
+var retrofit: Retrofit = Builder()
+    .baseUrl("https://api.github.com/")
+    .build()
 
-    val enteredString = readLine()
-    println("You have entered this: $enteredString")
+var service: GitHubService = retrofit.create(GitHubService::class.java)
+
+fun main(){
+    val repos: Call<List<Repo>> = service.listRepos("octocat")
 }
